@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartilha Digital — o que sai de dentro do lixo</title>
+<meta name="description" content="Cartilha digital sobre coleta seletiva, gestão de resíduos sólidos e contabilidade ambiental.">
+<meta name="theme-color" content="#06120c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Caveat:wght@500;700&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- símbolo de reciclagem reutilizado em todo o site -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-recycle" viewBox="-12 -12 24 24">
+    <g id="rc-arrow">
+      <path d="M-6.93 -4A8 8 0 0 1 4 -6.93" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M7.9 -4.68L5.7 -9.87L2.3 -3.99Z" fill="currentColor"/>
+    </g>
+    <use href="#rc-arrow" transform="rotate(120)"/>
+    <use href="#rc-arrow" transform="rotate(240)"/>
+  </symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"><span id="progress"></span></div>
+
+<header class="nav">
+  <a class="brand" href="#topo">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-recycle" width="24" height="24"/></svg>
+    Cartilha Digital
+  </a>
+  <nav aria-label="Capítulos">
+    <a href="#coleta">Coleta seletiva</a>
+    <a href="#residuos">Resíduos sólidos</a>
+    <a href="#contabilidade">Contabilidade ambiental</a>
+  </nav>
+  <a class="nav-cta" href="#faca-sua-parte">Faça sua parte</a>
+</header>
+
+<main>
+
+<!-- ============ PALCO: a lixeira que abre com o scroll ============ -->
+<section class="stage-wrap" id="topo" aria-label="Abertura">
+  <div class="stage" id="stage">
+    <div class="stage-glow"></div>
+
+    <div class="intro" id="intro">
+      <p class="eyebrow">Cartilha digital · Sustentabilidade</p>
+      <h1>Tem muita coisa boa <em>dentro do lixo.</em></h1>
+      <p class="lede">Role a página, abra a tampa e veja o que sai lá de dentro.</p>
+    </div>
+
+    <!-- lixeira filmada (quadros gerados no Higgsfield); a versão em SVG abaixo é a reserva -->
+    <div class="bin-film" id="filmBox" aria-hidden="true"><canvas id="film" width="1280" height="720"></canvas></div>
+
+    <!-- fundo da lixeira: sombra + interior -->
+    <svg class="bin-box bin-back" viewBox="0 0 400 520" aria-hidden="true">
+      <defs>
+        <radialGradient id="g-inside" cx="50%" cy="100%" r="90%">
+          <stop offset="0" stop-color="#c6f06a"/>
+          <stop offset="1" stop-color="#1c5a36"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="200" cy="496" rx="170" ry="16" fill="#000" opacity=".45"/>
+      <polygon points="62,112 338,112 360,152 40,152" fill="#06140c"/>
+      <polygon class="inside-light" points="62,112 338,112 360,152 40,152" fill="url(#g-inside)"/>
+    </svg>
+
+    <!-- tampa: polígono recalculado a cada frame -->
+    <svg class="bin-box bin-lid" id="lidSvg" viewBox="0 0 400 520" aria-hidden="true">
+      <polygon id="lidFace" class="lid-face" points="62,112 338,112 370,154 30,154"/>
+      <polygon id="lidInset" class="lid-inset" points="0,0"/>
+      <polygon id="lidLip" class="lid-lip" points="30,154 370,154 370,172 30,172"/>
+      <rect id="lidHandle" class="lid-handle" x="165" y="159" width="70" height="8" rx="4"/>
+    </svg>
+
+    <div class="bin-box beam-box" id="binBox" aria-hidden="true"><div class="beam"></div></div>
+
+    <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+
+    <!-- tudo aqui dentro "sai" da lixeira -->
+    <div class="emerge" id="emerge">
+      <div class="chapter-word" data-ch>
+        <span class="ch-num">01</span>
+        <h2>Coleta<br>Seletiva</h2>
+        <p class="hand">Separe hoje, preserve o amanhã!</p>
+      </div>
+      <div class="chapter-word" data-ch>
+        <span class="ch-num">02</span>
+        <h2>Gestão de<br>Resíduos Sólidos</h2>
+        <p class="hand">Pequenas atitudes, grandes impactos.</p>
+      </div>
+      <div class="chapter-word" data-ch>
+        <span class="ch-num">03</span>
+        <h2>Contabilidade<br>Ambiental</h2>
+        <p class="hand">Cuidar do meio ambiente também é um bom negócio.</p>
+      </div>
+
+      <a class="out-card" data-card href="#coleta">
+        <span class="oc-num">01</span>
+        <strong>Coleta Seletiva</strong>
+        <span class="oc-text">Cores das lixeiras, como separar e os erros a evitar.</span>
+        <span class="oc-go">Abrir →</span>
+      </a>
+      <a class="out-card" data-card href="#residuos">
+        <span class="oc-num">02</span>
+        <strong>Resíduos Sólidos</strong>
+        <span class="oc-text">Os 5 Rs, compostagem, eletrônicos e a lei.</span>
+        <span class="oc-go">Abrir →</span>
+      </a>
+      <a class="out-card" data-card href="#contabilidade">
+        <span class="oc-num">03</span>
+        <strong>Contabilidade Ambiental</strong>
+        <span class="oc-text">Ativos, passivos e por que sustentabilidade dá lucro.</span>
+        <span class="oc-go">Abrir →</span>
+      </a>
+    </div>
+
+    <!-- frente da lixeira: fica por cima do que está saindo -->
+    <svg class="bin-box bin-front" viewBox="0 0 400 520" aria-hidden="true">
+      <defs>
+        <linearGradient id="g-body" x1="0" x2="1">
+          <stop offset="0" stop-color="#1f6a41"/>
+          <stop offset=".35" stop-color="#37a063"/>
+          <stop offset=".7" stop-color="#2a8551"/>
+          <stop offset="1" stop-color="#17512f"/>
+        </linearGradient>
+        <linearGradient id="g-collar" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#46b673"/>
+          <stop offset="1" stop-color="#24774a"/>
+        </linearGradient>
+      </defs>
+      <circle cx="96" cy="476" r="24" fill="#0b0f0d"/><circle cx="96" cy="476" r="9" fill="#2a332e"/>
+      <circle cx="304" cy="476" r="24" fill="#0b0f0d"/><circle cx="304" cy="476" r="9" fill="#2a332e"/>
+      <path d="M40 150H360L326 456Q324 474 306 474H94Q76 474 74 456Z" fill="url(#g-body)"/>
+      <g stroke="#0d3a22" stroke-width="5" stroke-linecap="round" opacity=".35">
+        <path d="M84 196L104 440"/><path d="M118 196L132 440"/>
+        <path d="M316 196L296 440"/><path d="M282 196L268 440"/>
+      </g>
+      <path d="M40 150H360L356 186H44Z" fill="#0d3a22" opacity=".28"/>
+      <rect x="28" y="140" width="344" height="32" rx="12" fill="url(#g-collar)"/>
+      <rect x="40" y="145" width="320" height="5" rx="2.5" fill="#fff" opacity=".22"/>
+      <g transform="translate(200 318) scale(5.4)" color="#f4f0e4"><use href="#i-recycle" x="-12" y="-12" width="24" height="24"/></g>
+    </svg>
+
+    <div class="scroll-hint" id="hint"><span></span>role para abrir a lixeira</div>
+  </div>
+</section>
+
+<!-- ============ 01 COLETA SELETIVA ============ -->
+<section class="chapter c-cream first" id="coleta">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="big-num" data-reveal>01</span>
+      <div data-reveal>
+        <p class="eyebrow">Pequenas atitudes fazem uma grande diferença</p>
+        <h2>Coleta Seletiva</h2>
+        <p class="ch-lede">É a separação dos resíduos de acordo com suas características, facilitando a reciclagem e o descarte correto dos materiais.</p>
+      </div>
+      <p class="note" data-reveal>Reciclar é cuidar do presente e do futuro.</p>
+    </header>
+
+    <div class="block">
+      <h3 data-reveal>Cada cor, um destino</h3>
+      <p class="sub" data-reveal>Passe o mouse ou toque em uma lixeira para abrir.</p>
+      <div class="bins" id="bins" role="list"></div>
+      <div class="bin-detail" id="binDetail" aria-live="polite"></div>
+    </div>
+
+    <div class="block">
+      <h3 data-reveal>Como separar corretamente</h3>
+      <p class="sub" data-reveal>Antes de jogar no lixo, pense: “Isso pode ser reciclado? E como?”</p>
+      <ol class="steps">
+        <li data-reveal><span>1</span><h4>Lave e seque</h4><p>Retire o excesso de resíduos e lave as embalagens com água, se necessário.</p></li>
+        <li data-reveal><span>2</span><h4>Esvazie e achate</h4><p>Reduza o volume das embalagens para economizar espaço e facilitar o transporte.</p></li>
+        <li data-reveal><span>3</span><h4>Retire tampas e rótulos</h4><p>Tampas podem ser de outro material, e os rótulos dificultam a reciclagem.</p></li>
+        <li data-reveal><span>4</span><h4>Evite contaminar</h4><p>Mantenha os resíduos limpos e secos. Restos de comida, óleo e produtos químicos não vão para a reciclagem.</p></li>
+      </ol>
+    </div>
+
+    <div class="block two">
+      <div class="panel panel-red" data-reveal>
+        <h3>Erros para evitar</h3>
+        <ul class="xlist">
+          <li>Misturar resíduos recicláveis com lixo orgânico.</li>
+          <li>Jogar pilhas, baterias e eletrônicos no lixo comum.</li>
+          <li>Descartar óleo, produtos químicos ou outros resíduos perigosos de forma inadequada.</li>
+          <li>Colocar materiais sujos ou contaminados junto aos recicláveis.</li>
+          <li>Descartar lixo em ruas, terrenos ou áreas naturais.</li>
+        </ul>
+      </div>
+      <div class="panel panel-green" data-reveal>
+        <h3>O que o meio ambiente ganha</h3>
+        <ul class="vlist">
+          <li>Reduz a poluição do solo, da água e do ar.</li>
+          <li>Diminui a quantidade de resíduos enviados aos aterros sanitários.</li>
+          <li>Economiza recursos naturais e energia.</li>
+          <li>Incentiva a reciclagem e o reaproveitamento de materiais.</li>
+          <li>Contribui para cidades mais limpas e sustentáveis.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="game" id="game" data-reveal>
+        <div class="game-head">
+          <div>
+            <p class="eyebrow">Jogo rápido</p>
+            <h3>Onde vai cada resíduo?</h3>
+          </div>
+          <p class="game-score" id="gameScore"></p>
+        </div>
+        <div class="game-item" id="gameItem"></div>
+        <div class="game-opts" id="gameOpts"></div>
+        <p class="game-msg" id="gameMsg" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 GESTÃO DE RESÍDUOS SÓLIDOS ============ -->
+<section class="chapter c-forest" id="residuos">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="big-num" data-reveal>02</span>
+      <div data-reveal>
+        <p class="eyebrow">Pequenas atitudes, grandes impactos</p>
+        <h2>Gestão de Resíduos Sólidos</h2>
+        <p class="ch-lede">É o conjunto de práticas para cuidar dos resíduos que produzimos no dia a dia, da geração até o destino final: separação correta, reutilização, reciclagem, compostagem e descarte adequado.</p>
+      </div>
+      <p class="note" data-reveal>O planeta também é a nossa casa.</p>
+    </header>
+
+    <div class="block">
+      <h3 data-reveal>Por que isso é importante?</h3>
+      <ul class="chips">
+        <li data-reveal>Reduz a poluição do solo, da água e do ar</li>
+        <li data-reveal>Preserva os recursos naturais</li>
+        <li data-reveal>Diminui o envio de resíduos aos aterros</li>
+        <li data-reveal>Protege a saúde pública</li>
+        <li data-reveal>Diminui a proliferação de doenças</li>
+        <li data-reveal>Gera emprego e renda</li>
+        <li data-reveal>Evita o desperdício</li>
+        <li data-reveal>Contribui para cidades mais limpas</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3 data-reveal>Os 5 Rs da sustentabilidade</h3>
+      <p class="sub" data-reveal>Atitudes simples que fazem toda a diferença.</p>
+      <ol class="rs">
+        <li data-reveal><b>R</b><h4>Repensar</h4><p>Consuma apenas o necessário. Evite o desperdício.</p></li>
+        <li data-reveal><b>R</b><h4>Reduzir</h4><p>Prefira produtos duráveis, com menos embalagens e que gerem menos resíduos.</p></li>
+        <li data-reveal><b>R</b><h4>Reutilizar</h4><p>Dê um novo uso aos materiais. Seja criativo!</p></li>
+        <li data-reveal><b>R</b><h4>Reciclar</h4><p>Separe corretamente o lixo e encaminhe para a coleta seletiva.</p></li>
+        <li data-reveal><b>R</b><h4>Recuperar</h4><p>Apoie iniciativas de compostagem e outros processos de reaproveitamento.</p></li>
+      </ol>
+    </div>
+
+    <div class="block two">
+      <div class="panel panel-soil" data-reveal>
+        <p class="eyebrow">Transformando resíduos em adubo</p>
+        <h3>Compostagem</h3>
+        <p>É a decomposição natural de resíduos orgânicos, como restos de alimentos e folhas, que gera um adubo rico em nutrientes para o solo.</p>
+        <ul class="vlist">
+          <li>Restos de frutas e verduras</li>
+          <li>Cascas de ovos</li>
+          <li>Folhas secas e grama</li>
+          <li>Resíduos de poda</li>
+        </ul>
+        <p class="tip"><strong>Dica:</strong> evite carnes, laticínios e alimentos cozidos — eles podem atrair pragas e causar mau cheiro.</p>
+      </div>
+      <div class="panel panel-volt" data-reveal>
+        <p class="eyebrow">Descarte certo</p>
+        <h3>Eletrônicos</h3>
+        <p>Celulares, computadores, pilhas e baterias <strong>não devem ir para o lixo comum</strong>.</p>
+        <p>Leve-os a pontos de coleta ou locais de logística reversa.</p>
+        <div class="devices" aria-hidden="true"><span>📱</span><span>💻</span><span>🔋</span></div>
+      </div>
+    </div>
+
+    <div class="block law" data-reveal>
+      <p class="law-num">Lei nº 12.305<small>/2010</small></p>
+      <div>
+        <p class="eyebrow">Política Nacional de Resíduos Sólidos</p>
+        <p>Estabelece diretrizes para a gestão e o gerenciamento adequado dos resíduos sólidos no Brasil, com foco na redução, reutilização, reciclagem e destinação correta.</p>
+        <p class="law-all"><strong>A responsabilidade é de todos:</strong> governo, empresas e cidadãos compartilham o dever de cuidar do meio ambiente.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3 data-reveal>O que você pode fazer?</h3>
+      <p class="sub" data-reveal>Marque o que você já faz — ou vai começar a fazer hoje.</p>
+      <ul class="pledge" id="pledge">
+        <li data-reveal><label><input type="checkbox"><span>Separar o lixo em casa e no trabalho.</span></label></li>
+        <li data-reveal><label><input type="checkbox"><span>Preferir produtos com menos embalagens.</span></label></li>
+        <li data-reveal><label><input type="checkbox"><span>Usar sacolas reutilizáveis.</span></label></li>
+        <li data-reveal><label><input type="checkbox"><span>Participar de programas de coleta seletiva.</span></label></li>
+        <li data-reveal><label><input type="checkbox"><span>Incentivar amigos e familiares a fazerem o mesmo.</span></label></li>
+      </ul>
+      <p class="pledge-count" id="pledgeCount" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 CONTABILIDADE AMBIENTAL ============ -->
+<section class="chapter c-paper" id="contabilidade">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="big-num" data-reveal>03</span>
+      <div data-reveal>
+        <p class="eyebrow">Sustentabilidade e responsabilidade socioambiental</p>
+        <h2>Contabilidade Ambiental</h2>
+        <p class="ch-lede">É a parte da contabilidade que identifica, mede e registra os gastos, investimentos e obrigações da empresa com a preservação e a recuperação do meio ambiente.</p>
+      </div>
+      <p class="note" data-reveal>Cuidar do meio ambiente também é um bom negócio.</p>
+    </header>
+
+    <div class="block pillars-row">
+      <div class="pillars" data-reveal aria-label="Os três pilares da sustentabilidade">
+        <span class="p1">Meio<br>ambiente</span>
+        <span class="p2">Sociedade</span>
+        <span class="p3">Desenvolvimento<br>econômico</span>
+      </div>
+      <div data-reveal>
+        <h3>Três pilares em equilíbrio</h3>
+        <p class="ch-lede">A contabilidade ambiental equilibra os três pilares da sustentabilidade: <strong>meio ambiente</strong>, <strong>sociedade</strong> e <strong>desenvolvimento econômico</strong>. Reduz custos, melhora a imagem e faz a empresa se destacar.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3 data-reveal>Como aparece no balanço</h3>
+      <div class="ledger">
+        <article data-reveal>
+          <span class="tag tag-plus">Ativo ambiental</span>
+          <h4>O que a empresa tem para proteger a natureza.</h4>
+          <ul><li>Filtros antipoluentes</li><li>Estação de tratamento de água</li><li>Painéis solares</li></ul>
+        </article>
+        <article data-reveal>
+          <span class="tag tag-minus">Passivo ambiental</span>
+          <h4>O que a empresa deve por danos à natureza.</h4>
+          <ul><li>Recuperar uma área degradada</li><li>Multas por descarte irregular</li><li>Indenizações</li></ul>
+        </article>
+        <article data-reveal>
+          <span class="tag tag-mix">Custos e receitas</span>
+          <h4>Gastos e ganhos do dia a dia ambiental.</h4>
+          <ul><li>Coleta de resíduos <em>(custo)</em></li><li>Venda de recicláveis <em>(receita)</em></li><li>Economia de energia <em>(receita)</em></li></ul>
+        </article>
+      </div>
+    </div>
+
+    <div class="block two">
+      <div class="panel panel-green" data-reveal>
+        <h3>Vantagens para a empresa</h3>
+        <ul class="vlist">
+          <li><strong>Menos custos:</strong> reaproveitar água da chuva na limpeza reduz a conta de água.</li>
+          <li><strong>Imagem melhor:</strong> clientes preferem marcas que cuidam do meio ambiente.</li>
+          <li><strong>Menos riscos:</strong> licenças em dia evitam multas e processos.</li>
+          <li><strong>Mais qualidade:</strong> processos limpos geram produtos melhores.</li>
+        </ul>
+      </div>
+      <div class="panel panel-sun" data-reveal>
+        <h3>Faça sua parte no dia a dia</h3>
+        <dl class="daily">
+          <div><dt>Água</dt><dd>Feche a torneira ao escovar os dentes; use balde, não mangueira.</dd></div>
+          <div><dt>Energia</dt><dd>Apague a luz ao sair; ar-condicionado entre 23 °C e 24 °C.</dd></div>
+          <div><dt>Papel</dt><dd>Imprima frente e verso; prefira documentos digitais.</dd></div>
+          <div><dt>Lixo</dt><dd>Azul papel, vermelho plástico, amarelo metal, verde vidro.</dd></div>
+          <div><dt>Descarte</dt><dd>Pilhas em pontos de coleta; óleo de cozinha para reciclagem.</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="block example" data-reveal>
+      <p class="eyebrow">Exemplo prático</p>
+      <p class="ex-text">Uma loja troca as lâmpadas por LED, separa o papelão para reciclagem e registra esses gastos e economias na contabilidade.</p>
+      <ul class="ex-result">
+        <li><span>↓</span>Conta de luz menor</li>
+        <li><span>+</span>Receita com a venda do papelão</li>
+        <li><span>♥</span>Mais confiança dos clientes</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FECHAMENTO ============ -->
+<section class="finale" id="faca-sua-parte">
+  <div class="wrap">
+    <p class="note" data-reveal>O futuro do planeta começa com as atitudes de hoje.</p>
+    <h2 data-reveal>Faça sua parte!</h2>
+    <p class="ch-lede" data-reveal>Responda à autoavaliação e descubra como andam as suas atitudes sustentáveis. Sua participação faz a diferença.</p>
+    <a class="btn" data-reveal href="https://form.jotform.com/262916829691068" target="_blank" rel="noopener">Fazer a autoavaliação →</a>
+  </div>
+  <footer>
+    <span>Cartilha Digital · Resíduos bem gerenciados hoje garantem um amanhã melhor.</span>
+    <a href="#topo">Voltar ao topo ↑</a>
+  </footer>
+</section>
+
+</main>
+
+<script src="main.js"></script>
+</body>
+</html>
