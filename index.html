@@ -166,7 +166,7 @@
     <div class="block">
       <h3 data-reveal>Cada cor, um destino</h3>
       <p class="sub" data-reveal>Passe o mouse ou toque em uma lixeira para abrir.</p>
-      <div class="bins" id="bins" role="list"></div>
+      <div class="bins" id="bins" role="group" aria-label="Cores das lixeiras"></div>
       <div class="bin-detail" id="binDetail" aria-live="polite"></div>
     </div>
 
@@ -213,7 +213,7 @@
           </div>
           <p class="game-score" id="gameScore"></p>
         </div>
-        <div class="game-item" id="gameItem"></div>
+        <div class="game-item" id="gameItem" aria-live="polite"></div>
         <div class="game-opts" id="gameOpts"></div>
         <p class="game-msg" id="gameMsg" aria-live="polite"></p>
       </div>
@@ -320,7 +320,7 @@
     </header>
 
     <div class="block pillars-row">
-      <div class="pillars" data-reveal aria-label="Os três pilares da sustentabilidade">
+      <div class="pillars" data-reveal role="img" aria-label="Os três pilares da sustentabilidade: meio ambiente, sociedade e desenvolvimento econômico">
         <span class="p1">Meio<br>ambiente</span>
         <span class="p2">Sociedade</span>
         <span class="p3">Desenvolvimento<br>econômico</span>
@@ -332,7 +332,7 @@
     </div>
 
     <div class="block">
-      <h3 data-reveal>Como aparece no balanço</h3>
+      <h3 data-reveal>Exemplos na contabilidade</h3>
       <div class="ledger">
         <article data-reveal>
           <span class="tag tag-plus">Ativo ambiental</span>

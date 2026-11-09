@@ -81,6 +81,7 @@
     lastDrawn = i;
   }
 
+  const stackCards = matchMedia('(max-width: 840px)');
   let geo = { w: 0, h: 0, cx: 0, rimY: 0, binW: 0 };
   let sizes = { ch: [], card: [] };
 
@@ -209,31 +210,45 @@
     hint.style.opacity = (1 - seg(p, 0, .03)).toFixed(3);
 
     const targetY = geo.rimY * .5 + 20;
+    // faixa livre entre o menu fixo e a borda da lixeira: o que sai precisa caber nela
+    const bandTop = 76, bandBottom = geo.rimY - 12, band = Math.max(40, bandBottom - bandTop);
+    const fit = size => {
+      const scale = Math.min(1, band / size);
+      const half = size * scale / 2;
+      return { scale, y: clamp(targetY, bandTop + half, Math.max(bandTop + half, bandBottom - half)) };
+    };
 
     chapters.forEach((el, i) => {
       const [a, b] = T.chapters[i];
       const t = seg(p, a, b);
       if (t <= 0 || t >= 1) { el.style.visibility = 'hidden'; return; }
       const tin = easeOut(seg(t, 0, .4)), tout = easeInOut(seg(t, .74, 1));
-      const startY = geo.rimY + sizes.ch[i] * .18;
-      const y = lerp(startY, targetY, tin) - tout * geo.h * .2;
-      place(el, geo.cx, y, .3 + .7 * tin + .08 * tout, 0, Math.min(1, tin * 3) * (1 - tout));
+      const f = fit(sizes.ch[i] || 1);
+      const startY = geo.rimY + sizes.ch[i] * f.scale * .18;
+      const y = lerp(startY, f.y, tin) - tout * geo.h * .2;
+      place(el, geo.cx, y, (.3 + .7 * tin + .08 * tout) * f.scale, 0, Math.min(1, tin * 3) * (1 - tout));
     });
 
-    const mobile = geo.w < 760;
+    const mobile = stackCards.matches; // mesma fronteira do CSS (.out-card)
+    // o conjunto dos três cartões: empilhados no celular, em leque no desktop
+    const groupH = !sizes.card.length ? 0 : mobile
+      ? sizes.card.reduce((s, c) => s + c.h, 0) + 24
+      : Math.max(...sizes.card.map(c => c.h)) + 28;
+    const cf = fit(groupH || 1);
     cards.forEach((el, i) => {
       const [a, b] = T.cards(i);
       const t = seg(p, a, b);
       if (t <= 0) { el.style.visibility = 'hidden'; return; }
       const e = easeBack(t), k = i - 1, sz = sizes.card[i];
-      const tx = mobile ? geo.cx : geo.cx + k * (sz.w + 22);
-      const ty = mobile ? targetY - 10 + k * (sz.h + 12) : targetY - Math.abs(k) * -14;
+      const step = Math.min(sz.w + 22, (geo.w - sz.w - 24) / 2); // o leque nunca passa da tela
+      const tx = mobile ? geo.cx : geo.cx + k * step * cf.scale;
+      const ty = mobile ? cf.y + k * (sz.h + 12) * cf.scale : cf.y + (Math.abs(k) * 14 - 7) * cf.scale;
       const x = lerp(geo.cx, tx, e);
       const y = lerp(geo.rimY + sz.h * .2, ty, e);
-      place(el, x, y, lerp(.25, 1, clamp(e)), mobile ? 0 : k * 4 * e, Math.min(1, t * 4));
+      place(el, x, y, lerp(.25, 1, clamp(e)) * cf.scale, mobile ? 0 : k * 4 * e, Math.min(1, t * 4));
     });
 
-    drawParticles(p, now);
+    drawParticles(p, reduced ? 0 : now);
   }
 
   /* ---- laço principal ---- */
@@ -311,7 +326,7 @@
     detail.innerHTML = `<p class="bd-color">${b.cor}</p><p class="bd-what">${b.what}</p><p class="bd-ex">${b.ex}</p>`;
   }
   binsEl.innerHTML = BINS.map((b, i) =>
-    `<button class="bin-btn" type="button" role="listitem" data-i="${i}" data-reveal style="--i:${i}" aria-label="${b.cor}: ${b.what}">${miniBin(b, i)}<span>${b.cor}</span></button>`
+    `<button class="bin-btn" type="button" data-i="${i}" data-reveal style="--i:${i}" aria-label="${b.cor}: ${b.what}">${miniBin(b, i)}<span>${b.cor}</span></button>`
   ).join('');
   ['click', 'mouseover', 'focusin'].forEach(ev =>
     binsEl.addEventListener(ev, e => {
@@ -324,15 +339,15 @@
      JOGO — onde vai cada resíduo?
      ===================================================== */
   const OPTS = [
-    { id: 'azul', label: 'Azul · Papel', hex: '#2f6fd0', ct: '#fff' },
-    { id: 'vermelho', label: 'Vermelho · Plástico', hex: '#d8432f', ct: '#fff' },
-    { id: 'verde', label: 'Verde · Vidro', hex: '#2f9e56', ct: '#fff' },
-    { id: 'amarelo', label: 'Amarelo · Metal', hex: '#f0b323', ct: '#0e2418' },
-    { id: 'marrom', label: 'Marrom · Orgânico', hex: '#7a4a2b', ct: '#fff' },
+    { id: 'azul', label: 'Azul · Papel', where: 'azul (papel)', hex: '#2f6fd0', ct: '#fff' },
+    { id: 'vermelho', label: 'Vermelho · Plástico', where: 'vermelha (plástico)', hex: '#d8432f', ct: '#fff' },
+    { id: 'verde', label: 'Verde · Vidro', where: 'verde (vidro)', hex: '#2f9e56', ct: '#fff' },
+    { id: 'amarelo', label: 'Amarelo · Metal', where: 'amarela (metal)', hex: '#f0b323', ct: '#0e2418' },
+    { id: 'marrom', label: 'Marrom · Orgânico', where: 'marrom (orgânicos)', hex: '#7a4a2b', ct: '#fff' },
     { id: 'coleta', label: 'Ponto de coleta', hex: '#f4f0e4', ct: '#0e2418' },
   ];
   const ITEMS = [
-    ['📰', 'Jornal velho', 'azul'], ['🧴', 'Garrafa PET', 'vermelho'], ['🫙', 'Pote de vidro', 'verde'],
+    ['📰', 'Jornal velho', 'azul'], ['🧴', 'Garrafa PET', 'vermelho'], ['🍾', 'Garrafa de vidro', 'verde'],
     ['🥫', 'Lata de alumínio', 'amarelo'], ['🍌', 'Casca de banana', 'marrom'], ['🔋', 'Pilha usada', 'coleta'],
     ['📦', 'Caixa de papelão', 'azul'], ['🥤', 'Copo plástico', 'vermelho'], ['📱', 'Celular quebrado', 'coleta'],
     ['🥚', 'Casca de ovo', 'marrom'],
@@ -371,10 +386,15 @@
     if (ok) score++; else btn.classList.add('wrong');
     const where = ans === 'coleta'
       ? 'vai para um ponto de coleta (logística reversa), nunca para o lixo comum'
-      : `vai na lixeira ${right.label.toLowerCase().replace(' · ', ' (')})`;
+      : `vai na lixeira ${right.where}`;
     gMsg.textContent = (ok ? 'Isso! ' : 'Quase. ') + `${name} ${where}.`;
     clearTimeout(timer);
-    timer = setTimeout(() => { gi++; renderRound(); }, ok ? 1300 : 2400);
+    const hadFocus = $('#game').contains(document.activeElement);
+    timer = setTimeout(() => {
+      gi++; renderRound();
+      // os botões são recriados a cada rodada: devolve o foco para quem joga pelo teclado
+      if (hadFocus) { const next = $('button', $('#game')); if (next) next.focus({ preventScroll: true }); }
+    }, ok ? 1300 : 2400);
   });
   renderRound();
 
@@ -396,6 +416,7 @@
         io.unobserve(en.target);
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+    document.documentElement.classList.add('js');
     // escalonamento entre irmãos
     revealEls.forEach(el => {
       if (!el.style.getPropertyValue('--i')) {
